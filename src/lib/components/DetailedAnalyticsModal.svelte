@@ -1,0 +1,358 @@
+<script lang="ts">
+  import UserDisplay from '../UserDisplay.svelte';
+  import { portal } from '../../actions/portal';
+  import { memberAvatarSrc } from '../../discordMedia';
+  import Papicon from '../Papicon.svelte';
+  import Chart from '../charts/Chart.svelte';
+  import { channelDetailsModal } from '../../stores/channelDetailsModal.svelte';
+  import { m, dateLocale } from '../../i18n';
+
+  const {
+    open = false,
+    title,
+    subtitle,
+    icon,
+    iconColorClass = 'text-primary',
+    iconBgClass = 'bg-primary/10',
+    type,
+    data = [],
+    chartData,
+    chartOptions,
+    onClose,
+    onOpenMember,
+    fmt,
+    fmtH,
+    getSanctionColor,
+  } = $props<{
+    open: boolean;
+    title: string;
+    subtitle: string;
+    icon: string;
+    iconColorClass?: string;
+    iconBgClass?: string;
+    type: 'messages' | 'voice' | 'channels' | 'moderators' | 'sanctioned' | 'staff' | 'recent_sanctions';
+    data: any[];
+    chartData?: any;
+    chartOptions?: any;
+    onClose: () => void;
+    onOpenMember?: (id: string, name: string) => void;
+    fmt?: (n: number) => string;
+    fmtH?: (mins: number) => string;
+    getSanctionColor?: (type: string) => string;
+  }>();
+
+  // Un repli sur l'avatar Discord generique donnerait la meme vignette a tous
+  // les membres sans photo : on passe le nom et l'id pour obtenir une
+  // initiale coloree distincte (issue #211).
+  const getAvatar = (url: string | null, name?: string | null, userId?: string | null) =>
+    memberAvatarSrc(url, name, userId);
+
+  let searchQuery = $state('');
+  let sortKey = $state('volume'); // 'volume' or 'name'
+  let sortOrder = $state<'asc'|'desc'>('desc');
+  let currentPage = $state(1);
+  const itemsPerPage = 50;
+
+  $effect(() => {
+    // Reset page when search or sort changes
+    searchQuery;
+    sortKey;
+    sortOrder;
+    currentPage = 1;
+  });
+
+  const filteredData = $derived(data.filter(item => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    const name = item.name || item.username || item.channelName || item.channelId || item.moderatorTag || item.targetTag || '';
+    const reason = item.reason || '';
+    return name.toLowerCase().includes(q) || reason.toLowerCase().includes(q);
+  }));
+
+  const sortedData = $derived([...filteredData].sort((a, b) => {
+    let valA, valB;
+    if (sortKey === 'name') {
+      valA = (a.name || a.username || a.channelName || a.channelId || a.moderatorTag || a.targetTag || '').toLowerCase();
+      valB = (b.name || b.username || b.channelName || b.channelId || b.moderatorTag || b.targetTag || '').toLowerCase();
+    } else {
+      valA = a.messageCount ?? a.voiceTimeSeconds ?? a.messagesCount ?? a.count ?? a.score ?? (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+      valB = b.messageCount ?? b.voiceTimeSeconds ?? b.messagesCount ?? b.count ?? b.score ?? (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+    }
+    
+    if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+    if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
+  }));
+
+  const totalPages = $derived(Math.max(1, Math.ceil(sortedData.length / itemsPerPage)));
+  const paginatedData = $derived(sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+</script>
+
+{#if open}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div use:portal class="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6" onclick={onClose}>
+    <div class="absolute inset-0 bg-surface/80"></div>
+    
+    <div 
+      class="relative w-full max-w-5xl h-[95vh] flex flex-col premium-card rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-300"
+      onclick={(e) => e.stopPropagation()}
+    >
+      <!-- Header -->
+      <div class="p-6 md:p-8 flex items-start justify-between border-b border-outline-variant/10 shrink-0">
+        <div class="flex items-center gap-4">
+          <div class="p-3 rounded-lg {iconBgClass} {iconColorClass}">
+            <Papicon {icon} size={24} />
+          </div>
+          <div>
+            <h3 class="text-xl md:text-2xl font-semibold text-on-surface">{title}</h3>
+            <p class="text-xs font-bold text-on-surface-variant">{subtitle} {m.d7_dam_results_of({ count: filteredData.length, total: data.length })}</p>
+          </div>
+        </div>
+        <button 
+          onclick={onClose}
+          aria-label={m.common_close()}
+          class="p-2 rounded-xl bg-surface-container-high/40 hover:bg-surface-container-high hover:text-error text-on-surface-variant transition-colors"
+        >
+          <Papicon icon="X" size={20} />
+        </button>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 space-y-8">
+        
+        {#if chartData}
+          <div class="h-[300px]">
+             <Chart data={chartData} type="bar" height={300} options={chartOptions} />
+          </div>
+        {/if}
+
+        <!-- Toolbar: Search & Sort -->
+        <div class="flex flex-col md:flex-row gap-4 p-4 rounded-xl bg-surface-container-high/20 border border-outline-variant/5">
+          <div class="flex-1 relative">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40">
+              <Papicon icon="MagnifyingGlass" size={20} />
+            </div>
+            <input aria-label={m.d7_dam_search_placeholder()} 
+              type="text" 
+              bind:value={searchQuery}
+              placeholder={m.d7_dam_search_placeholder()}
+              class="w-full bg-surface-container-high/40 text-on-surface text-sm font-bold rounded-lg pl-12 pr-4 py-3 border border-field-border focus:border-primary/50 focus:outline-none transition-colors placeholder:text-on-surface-variant/40"
+            />
+          </div>
+          <div class="flex gap-2">
+            <select aria-label={m.a11y_sort_by()} 
+              bind:value={sortKey}
+              class="bg-surface-container-high/40 text-on-surface text-sm font-bold rounded-lg px-4 py-3 border border-field-border focus:border-primary/50 focus:outline-none transition-colors appearance-none cursor-pointer"
+            >
+              <option value="volume">{m.d7_dam_sort_volume()}</option>
+              <option value="name">{m.d7_dam_sort_alpha()}</option>
+            </select>
+            <button 
+              onclick={() => sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'}
+              class="px-4 py-3 rounded-lg bg-surface-container-high/40 hover:bg-surface-container-high text-on-surface transition-colors flex items-center justify-center gap-2 border border-outline-variant/5"
+            >
+              <Papicon icon={sortOrder === 'desc' ? 'SortDescending' : 'SortAscending'} size={18} />
+            </button>
+          </div>
+        </div>
+
+        <!-- Data List -->
+        <div class="space-y-3">
+          {#each paginatedData as item, i}
+            {@const globalIndex = (currentPage - 1) * itemsPerPage + i + 1}
+            
+            <!-- MESSAGES / VOICE -->
+            {#if type === 'messages' || type === 'voice'}
+              <button
+                disabled={!onOpenMember}
+                onclick={() => onOpenMember?.(item.userId, item.name || item.username)}
+                class="w-full flex items-center justify-between p-4 rounded-lg bg-surface-container-high/20 border border-outline-variant/5 enabled:hover:bg-surface-container-high/60 transition-all text-left group"
+              >
+                <div class="flex items-center gap-4">
+                  <div class="w-8 text-center text-xs font-semibold text-on-surface-variant/40">{globalIndex}</div>
+                  <UserDisplay userId={item.userId} name={item.name || item.username} username={item.username} avatarUrl={item.avatarUrl} size="lg" handle />
+                </div>
+                <div class="flex items-center gap-6">
+                  <div class="text-right">
+                    <p class="text-2xs font-semibold {type === 'messages' ? 'text-primary' : 'text-success'} uppercase tracking-widest">{type === 'messages' ? m.d7_dam_messages() : m.d7_dam_minutes()}</p>
+                    <p class="text-base font-semibold text-on-surface">{(type === 'messages' ? item.messageCount : Math.round(item.voiceTimeSeconds / 60)).toLocaleString(dateLocale())}</p>
+                  </div>
+                  <Papicon icon="ArrowRight" size={16} class="opacity-0 group-enabled:group-hover:opacity-100 transition-opacity" />
+                </div>
+              </button>
+
+            <!-- CHANNELS -->
+            {:else if type === 'channels'}
+              <button
+                onclick={() => channelDetailsModal.show(item.channelId, item.channelName || item.name)}
+                class="w-full flex items-center justify-between p-4 rounded-lg bg-surface-container-high/20 border border-outline-variant/5 hover:bg-surface-container-high/60 transition-all text-left group"
+              >
+                <div class="flex items-center gap-4">
+                  <div class="w-8 text-center text-xs font-semibold text-on-surface-variant/40">{globalIndex}</div>
+                  <div class="bg-secondary/10 p-3 rounded-xl text-secondary">
+                    <Papicon icon="Hash" size={20} />
+                  </div>
+                  <p class="text-base font-semibold text-on-surface">#{item.channelName || item.name || item.channelId}</p>
+                </div>
+                <div class="flex items-center gap-6">
+                  <div class="text-right">
+                    <p class="text-xs font-semibold text-secondary">{m.d7_dam_volume()}</p>
+                    <p class="text-base font-semibold text-on-surface">{(item.messagesCount || item.count).toLocaleString(dateLocale())}</p>
+                  </div>
+                  <Papicon icon="ArrowRight" size={16} class="opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </button>
+
+            <!-- MODERATORS -->
+            {:else if type === 'moderators'}
+              <button
+                disabled={!onOpenMember}
+                onclick={() => onOpenMember?.(item.userId, item.moderatorTag)}
+                class="w-full flex items-center justify-between p-4 rounded-lg bg-surface-container-high/20 border border-outline-variant/5 enabled:hover:bg-surface-container-high/60 transition-all text-left"
+              >
+                <div class="flex items-center gap-4">
+                  <div class="w-8 text-center text-xs font-semibold text-on-surface-variant/40">{globalIndex}</div>
+                  <UserDisplay userId={item.userId} name={item.moderatorTag} avatarUrl={item.avatarUrl} size="lg" handle />
+                </div>
+                <div class="text-right">
+                  <p class="text-xs font-semibold text-primary">{m.d7_dam_actions()}</p>
+                  <p class="text-base font-semibold text-on-surface">{item.count}</p>
+                </div>
+              </button>
+
+            <!-- SANCTIONED -->
+            {:else if type === 'sanctioned'}
+              <button
+                disabled={!onOpenMember}
+                onclick={() => onOpenMember?.(item.targetUserId, item.targetTag)}
+                class="w-full flex items-center justify-between p-4 rounded-lg bg-surface-container-high/20 border border-outline-variant/5 enabled:hover:bg-surface-container-high/60 transition-all text-left"
+              >
+                <div class="flex items-center gap-4">
+                  <div class="w-8 text-center text-xs font-semibold text-on-surface-variant/40">{globalIndex}</div>
+                  <UserDisplay userId={item.targetUserId} name={item.targetTag} avatarUrl={item.avatarUrl} size="lg" />
+                </div>
+                <div class="text-right">
+                  <p class="text-xs font-semibold text-error">{m.d7_dam_sanctions()}</p>
+                  <p class="text-base font-semibold text-on-surface">{item.count}</p>
+                </div>
+              </button>
+
+            <!-- STAFF LEADERBOARD -->
+            {:else if type === 'staff'}
+              <button
+                disabled={!onOpenMember}
+                onclick={() => onOpenMember?.(item.userId, item.name)}
+                class="w-full flex items-center gap-4 p-4 rounded-lg bg-surface-container-high/20 enabled:hover:bg-surface-container-high/50 border border-outline-variant/5 transition-all text-left group"
+              >
+                <div class="flex items-center justify-center w-8 h-8 rounded-full font-semibold text-xs {globalIndex <= 3 ? 'bg-warning/10 text-warning' : 'bg-on-surface/5 text-on-surface-variant/30 shrink-0'}">
+                  {globalIndex}
+                </div>
+                <UserDisplay userId={item.userId} name={item.name} avatarUrl={item.avatarUrl} subtitle={item.grade || m.d7_staff()} size="lg" class="flex-1" />
+                <div class="hidden md:flex items-center gap-6 mr-4 shrink-0">
+                  <div class="text-right">
+                    <p class="text-xs font-semibold text-on-surface-variant/30">{m.d7_dam_messages()}</p>
+                    <p class="text-xs font-bold text-on-surface">{fmt?.(item.messages)}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-xs font-semibold text-on-surface-variant/30">{m.d7_dam_voice()}</p>
+                    <p class="text-xs font-bold text-on-surface">{fmtH?.(item.voiceMinutes)}</p>
+                  </div>
+                </div>
+                <div class="text-right pl-4 border-l border-outline-variant/10 shrink-0">
+                  <p class="text-xs font-semibold text-primary">{m.d7_dam_score()}</p>
+                  <p class="text-lg font-semibold text-primary">{fmt?.(item.score)}</p>
+                </div>
+              </button>
+
+            <!-- RECENT SANCTIONS -->
+            {:else if type === 'recent_sanctions'}
+              <div class="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-xl bg-surface-container-high/30 border border-outline-variant/10 hover:bg-surface-container-high/50 transition-all group gap-4">
+                <div class="flex items-center gap-4">
+                  <div class="w-8 text-center text-xs font-semibold text-on-surface-variant/40 hidden md:block">{globalIndex}</div>
+                  <button
+                    disabled={!onOpenMember}
+                    onclick={() => onOpenMember?.(item.targetUserId, item.targetTag)}
+                    class="w-12 h-12 rounded-lg overflow-hidden bg-on-surface/5 flex items-center justify-center transition-transform shrink-0"
+                  >
+                    <img src={getAvatar(item.targetAvatarUrl, item.targetTag, item.targetUserId)} alt="" class="w-full h-full object-cover" />
+                  </button>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <UserDisplay userId={item.targetUserId} name={item.targetTag} avatar={false} size="sm" />
+                      {#if getSanctionColor}
+                        <span class="px-2 py-0.5 rounded-lg text-xs font-semibold" style="background: {getSanctionColor(item.type)}20; color: {getSanctionColor(item.type)}">{item.type}</span>
+                      {/if}
+                    </div>
+                    <p class="text-xs font-medium text-on-surface-variant mt-0.5 line-clamp-1">{item.reason || m.d7_dam_no_reason()}</p>
+                    <p class="text-2xs text-on-surface-variant/40 mt-1">{new Date(item.createdAt).toLocaleString(dateLocale())}</p>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 border-outline-variant/5 pt-3 md:pt-0 shrink-0">
+                  <div class="text-right">
+                    <p class="text-xs font-semibold text-on-surface-variant/40">{m.d7_dam_moderator()}</p>
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <UserDisplay userId={item.moderatorUserId} name={item.moderatorTag} avatarUrl={item.moderatorAvatarUrl} size="xs" />
+                    </div>
+                  </div>
+                  <Papicon icon="CaretRight" size={16} class="text-on-surface-variant/20 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            {/if}
+          {/each}
+
+          {#if paginatedData.length === 0}
+            <div class="py-20 text-center opacity-40">
+              <Papicon icon="Ghost" size={48} class="mx-auto mb-4" />
+              <p class="text-sm font-bold">{m.d7_no_data_found()}</p>
+            </div>
+          {/if}
+        </div>
+
+        <!-- Pagination -->
+        {#if totalPages > 1}
+          <div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+            <button 
+              onclick={() => currentPage = Math.max(1, currentPage - 1)}
+              disabled={currentPage === 1}
+              class="px-4 py-2 rounded-xl bg-surface-container-high/40 hover:bg-surface-container-high text-xs font-bold text-on-surface transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <Papicon icon="CaretLeft" size={14} />
+              {m.d7_dam_prev()}
+            </button>
+            <span class="text-xs font-bold text-on-surface-variant">{m.d7_dam_page({ current: currentPage, total: totalPages })}</span>
+            <button 
+              onclick={() => currentPage = Math.min(totalPages, currentPage + 1)}
+              disabled={currentPage === totalPages}
+              class="px-4 py-2 rounded-xl bg-surface-container-high/40 hover:bg-surface-container-high text-xs font-bold text-on-surface transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {m.d7_dam_next()}
+              <Papicon icon="CaretRight" size={14} />
+            </button>
+          </div>
+        {/if}
+
+      </div>
+    </div>
+  </div>
+{/if}
+
+<style>
+  .premium-card {
+    background: var(--surface-container-low);
+    border: 1px solid color-mix(in srgb, var(--outline-variant) 60%, transparent);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--outline-variant) 60%, transparent);
+    border-radius: 10px;
+  }
+</style>
+
