@@ -1,0 +1,322 @@
+<script lang="ts">
+  import type { Snippet } from 'svelte';
+  import Modal from './Modal.svelte';
+  import Papicon from '../icons/Papicon.svelte';
+  import Tabs, { type TabItem } from './Tabs.svelte';
+
+  const {
+    open,
+    onClose,
+    icon,
+    title,
+    subtitle = '',
+    bannerUrl = null,
+    leading,
+    badges,
+    titleMeta,
+    actions,
+    tabs = [],
+    active = '',
+    activeTab,
+    onchange = () => {},
+    onTabChange,
+    tabsLabel = '',
+    children,
+  }: {
+    open: boolean;
+    onClose: () => void;
+    icon?: string;
+    title: string;
+    subtitle?: string | Snippet;
+    bannerUrl?: string | null;
+    leading?: Snippet;
+    badges?: Snippet;
+    titleMeta?: Snippet;
+    actions?: Snippet;
+    tabs?: TabItem[];
+    active?: string;
+    activeTab?: string;
+    onchange?: (id: string) => void;
+    onTabChange?: (id: string) => void;
+    tabsLabel?: string;
+    children: Snippet;
+  } = $props();
+
+  const currentTab = $derived(active || activeTab || '');
+  function handleTabChange(id: string) {
+    onchange(id);
+    onTabChange?.(id);
+  }
+</script>
+
+<Modal flush {open} {onClose} size="screen" showCloseButton={false} ariaLabel={title}>
+  <div class="sheet">
+    <header class="sheet-header">
+      {#if bannerUrl}
+        <div class="sheet-banner" style="background-image: url('{bannerUrl}')" aria-hidden="true"></div>
+      {/if}
+      <div class="sheet-identity" class:sheet-identity--with-banner={Boolean(bannerUrl)}>
+        {#if leading}
+          {@render leading()}
+        {:else if icon}
+          <span class="sheet-icon"><Papicon {icon} size={24} /></span>
+        {/if}
+        <div class="sheet-identity__text">
+          <div class="sheet-title-row">
+            <h2 class="sheet-title">{title}</h2>
+            {@render (badges ?? titleMeta)?.()}
+          </div>
+          {#if typeof subtitle === 'function'}
+            <div class="sheet-subtitle-rich">
+              {@render subtitle()}
+            </div>
+          {:else if subtitle}
+            <p class="sheet-subtitle">{subtitle}</p>
+          {/if}
+        </div>
+        <div class="sheet-actions">{@render actions?.()}</div>
+      </div>
+    </header>
+
+    {#if tabs.length > 0}
+      <div class="sheet-tabs">
+        <Tabs label={tabsLabel || title} {tabs} active={currentTab} onchange={handleTabChange} />
+      </div>
+    {/if}
+
+    <div class="sheet-body">{@render children()}</div>
+  </div>
+</Modal>
+
+<style>
+  .sheet {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: var(--color-surface, var(--surface));
+  }
+
+  .sheet-header {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface-container-lowest, var(--surface-container-lowest));
+    border-bottom: 1px solid var(--color-outline-variant, var(--outline-variant));
+  }
+
+  .sheet-banner {
+    width: 100%;
+    height: 6.5rem;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--color-surface-container, var(--surface-container));
+  }
+
+  .sheet-identity {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .sheet-identity--with-banner {
+    padding-top: 1rem;
+  }
+
+  .sheet-identity__text {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .sheet-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sheet-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-on-surface, var(--on-surface));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sheet-subtitle {
+    margin: 0.125rem 0 0;
+    font-size: 0.875rem;
+    color: var(--color-on-surface-variant, var(--on-surface-variant));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sheet-subtitle-rich {
+    margin-top: 0.125rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--color-on-surface-variant, var(--on-surface-variant));
+  }
+
+  .sheet-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    flex-shrink: 0;
+    border-radius: 0.75rem;
+    color: var(--color-primary, var(--primary-color));
+    background: color-mix(in srgb, var(--color-primary, var(--primary-color)) 10%, transparent);
+  }
+
+  .sheet-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  .sheet-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 0.75rem 1.5rem;
+    background: color-mix(in srgb, var(--color-surface, var(--surface)) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-outline-variant, var(--outline-variant));
+  }
+
+  .sheet-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .sheet-identity,
+    .sheet-tabs,
+    .sheet-body {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .sheet-actions {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+
+  .sheet :global(.sheet-kpis) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 1.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .sheet :global(.sheet-kpis) {
+      grid-template-columns: repeat(var(--kpis, 4), minmax(0, 1fr));
+    }
+
+    .sheet :global(.sheet-kpis > div + div) {
+      border-left: 1px solid var(--color-outline-variant, var(--outline-variant));
+      padding-left: 1.25rem;
+    }
+  }
+
+  .sheet :global(.sheet-kpis dt) {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--color-on-surface-variant, var(--on-surface-variant));
+  }
+
+  .sheet :global(.sheet-kpis dd) {
+    margin: 0.125rem 0 0;
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-on-surface, var(--on-surface));
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sheet :global(.sheet-kpis span) {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-on-surface-variant, var(--on-surface-variant));
+  }
+
+  .sheet :global(.sheet-facts) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sheet :global(.sheet-facts > div) {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-outline-variant, var(--outline-variant)) 60%, transparent);
+  }
+
+  .sheet :global(.sheet-facts > div:first-child) {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .sheet :global(.sheet-facts dt) {
+    font-size: 0.8125rem;
+    color: var(--color-on-surface-variant, var(--on-surface-variant));
+  }
+
+  .sheet :global(.sheet-facts dd) {
+    margin: 0;
+    min-width: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-on-surface, var(--on-surface));
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .sheet :global(.sheet-row) {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    text-align: left;
+  }
+
+  .sheet :global(button.sheet-row:hover:not(:disabled)) {
+    background: var(--color-surface-container-low, var(--surface-container-low));
+  }
+
+  .sheet :global(button.sheet-row:disabled) {
+    cursor: default;
+  }
+
+  .sheet :global(.sheet-bar) {
+    display: block;
+    height: 0.375rem;
+    margin-top: 0.375rem;
+    border-radius: 9999px;
+    background: var(--color-surface-container-high, var(--surface-container-high));
+    overflow: hidden;
+  }
+
+  .sheet :global(.sheet-bar > span) {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-primary, var(--primary-color));
+  }
+</style>
