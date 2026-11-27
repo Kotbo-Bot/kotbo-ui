@@ -105,7 +105,7 @@
           <div class="confirm-modal__impacts">
             <p class="confirm-modal__impacts-title">{msgs.confirm_impacts_title()}</p>
             <ul class="confirm-modal__impacts-list">
-              {#each impacts as impact}
+              {#each impacts as impact, i (i)}
                 <li class="confirm-modal__impact">
                   <span class="confirm-modal__impact-arrow" aria-hidden="true">
                     <Papicon icon="ArrowRight" size={13} />

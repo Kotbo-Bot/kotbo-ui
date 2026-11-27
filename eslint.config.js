@@ -30,7 +30,9 @@ export default defineConfig(
 			],
 			'@typescript-eslint/no-explicit-any': 'warn',
 			// @kotbo/ui is a standalone Svelte 5 library, not a SvelteKit app using $app/paths resolve().
-			'svelte/no-navigation-without-resolve': 'off'
+			'svelte/no-navigation-without-resolve': 'off',
+			// Local non-reactive Date/Set instances inside helper functions should not be forced into SvelteDate/SvelteSet.
+			'svelte/prefer-svelte-reactivity': 'off'
 		}
 	},
 	{

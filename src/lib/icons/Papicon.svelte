@@ -90,7 +90,7 @@
       aria-hidden="true"
       focusable="false"
     >
-      {#each svgChildren as child}
+      {#each svgChildren as child, i (i)}
         {#if child.type === 'path'}
           <path
             d={child.props?.d}

@@ -19,7 +19,6 @@
     Menu,
     Modal,
     MultiSelect,
-    Papicon,
     RefreshButton,
     SearchableSelect,
     SectionCard,
@@ -392,22 +391,18 @@
           </Field>
 
           <Field label="Couleur">
-            {#snippet children()}
-              <FormColorPicker bind:value={colorVal} />
-            {/snippet}
+            <FormColorPicker bind:value={colorVal} />
           </Field>
 
           <Field label="Fourchette ({rangeMin} – {rangeMax})">
-            {#snippet children()}
-              <AmountRangeSlider
-                range={{ min: 10, max: 1000 }}
-                bind:min={rangeMin}
-                bind:max={rangeMax}
-                labelMin="Minimum"
-                labelMax="Maximum"
-                labelRange="Fourchette"
-              />
-            {/snippet}
+            <AmountRangeSlider
+              range={{ min: 10, max: 1000 }}
+              bind:min={rangeMin}
+              bind:max={rangeMax}
+              labelMin="Minimum"
+              labelMax="Maximum"
+              labelRange="Fourchette"
+            />
           </Field>
         </div>
 

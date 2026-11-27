@@ -6,7 +6,7 @@
 
 {#if compact}
   <div class="anx-skel-compact" aria-busy="true">
-    {#each Array(rows) as _}
+    {#each Array(rows) as _, i (i)}
       <div class="anx-skel-compact__row">
         <Skeleton width="2rem" height="2rem" rounded="0.5rem" />
         <div class="anx-skel-compact__lines">
@@ -19,7 +19,7 @@
 {:else}
   <div class="anx-skel-page" aria-busy="true">
     <div class="anx-skel-kpis">
-      {#each Array(4) as _}
+      {#each Array(4) as _, i (i)}
         <div class="anx-skel-card">
           <div class="anx-skel-card__top">
             <Skeleton width="2.5rem" height="2.5rem" rounded="0.75rem" />
