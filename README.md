@@ -20,19 +20,21 @@ Bibliothèque partagée de composants **Svelte 5** et de visualisations **Analyt
 
 ## Installation (Bun uniquement)
 
+```bash
+bun add @kotbo/ui
+```
+
+Ou directement dans `package.json` :
+
 ```json
 {
   "dependencies": {
-    "@kotbo/ui": "github:Kotbo-Bot/kotbo-ui"
+    "@kotbo/ui": "^0.1.0"
   }
 }
 ```
 
-> Pour le développement local côte à côte avant push, vous pouvez pointer temporairement vers `"file:../Kotbo-ui"`.
-
-```bash
-bun install
-```
+> Pour le développement local côte à côte avant publication, vous pouvez pointer temporairement vers `"file:../Kotbo-ui"`.
 
 ## Démarrage rapide
 
