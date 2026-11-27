@@ -473,12 +473,12 @@
   .chart-card {
     display: flex;
     flex-direction: column;
-    gap: 0.875rem;
+    gap: var(--kotbo-chart-card-gap, 0.875rem);
     min-width: 0;
-    padding: 1rem;
-    border-radius: 0.875rem;
+    padding: var(--kotbo-chart-card-padding, 1rem);
+    border-radius: var(--kotbo-chart-card-radius, 0.875rem);
     border: 1px solid var(--color-outline-variant, var(--outline-variant));
-    background: var(--color-surface-container-lowest, var(--surface-container-lowest));
+    background: var(--kotbo-chart-card-bg, var(--color-surface-container-lowest, var(--surface-container-lowest)));
   }
 
   .chart-card__toolbar {
@@ -573,7 +573,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
     gap: 0.5rem 1.5rem;
-    padding-top: 0.75rem;
+    padding-top: var(--kotbo-facts-padding-top, 0.75rem);
     border-top: 1px solid var(--color-outline-variant, var(--outline-variant));
   }
 
@@ -595,8 +595,8 @@
 
   .facts__item dd {
     margin: 0;
-    font-size: 0.9375rem;
-    font-weight: 600;
+    font-size: var(--kotbo-fact-value-size, 0.9375rem);
+    font-weight: var(--kotbo-fact-value-weight, 600);
     font-variant-numeric: tabular-nums;
     color: var(--color-on-surface, var(--on-surface));
   }
