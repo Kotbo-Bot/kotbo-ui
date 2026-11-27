@@ -3,6 +3,10 @@
   "version": "0.1.1",
   "description": "Bibliothèque UI et Analytics v3 partagée pour Kotbo et AegisAI",
   "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kotbo-Bot/kotbo-ui.git"
+  },
   "publishConfig": {
     "access": "public"
   },
