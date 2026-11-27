@@ -255,6 +255,13 @@ import {
 } from 'lucide-svelte';
 import { toPapiconsName } from './papicons';
 
+/**
+ * Registre statique des icônes réellement employées par le dashboard.
+ *
+ * `import * as LucideIcons` empêchait l'élagage du bundle et embarquait les
+ * milliers d'exports de lucide-svelte. Les imports nommés permettent à Vite de
+ * ne conserver que cette sélection.
+ */
 const icons = {
   Radio,
   PanelLeftOpen,

@@ -1,0 +1,201 @@
+/* Jetons de design @kotbo/ui : thèmes Sand (clair) & Night (sombre),
+   alias bidirectionnels pour compatibilité Kotbo Dashboard et AegisAI. */
+
+:root {
+  --font-headline: "SN Pro", "Outfit", "Inter", system-ui, -apple-system, sans-serif;
+  --font-body: "SN Pro", "Inter", system-ui, -apple-system, sans-serif;
+  --font-label: "SN Pro", "Manrope", "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Plans de superposition */
+  --layer-editor: 9000;
+  --layer-modal: 9999;
+  --layer-modal-overlay: 10010;
+  --layer-popover: 15000;
+  --layer-confirm: 20000;
+  --layer-command: 30000;
+
+  /* Surfaces Sand (clair) */
+  --background: #fcfbf8;
+  --surface: #fcfbf8;
+  --on-background: #491d11;
+  --on-surface: #491d11;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f8f7f3;
+  --surface-container: #efede7;
+  --surface-container-high: #e5e3dd;
+  --surface-container-highest: #dcd9d0;
+  --on-surface-variant: #6b4336;
+  --outline: #b8a9a0;
+  --outline-variant: rgba(73, 29, 17, 0.1);
+  --surface-hover: rgba(73, 29, 17, 0.04);
+  --surface-selection: rgba(31, 143, 78, 0.08);
+  --primary-color: #1f8f4e;
+  --on-primary-color: #ffffff;
+  --primary-container-color: #dcfce7;
+  --on-primary-container-color: #14532d;
+  --secondary-color: #16a34a;
+  --secondary-container-color: #dcfce7;
+  --on-secondary-container-color: #166534;
+  --tertiary-color: #0d9488;
+  --tertiary-container-color: #ccfbf1;
+  --on-tertiary-container-color: #115e59;
+  --warning-color: #9a5b00;
+  --success-color: #166534;
+  --on-warning-container-color: #78350f;
+  --on-success-container-color: #14532d;
+  --field-border-color: rgba(73, 29, 17, 0.22);
+  --error-color: #b91c1c;
+  --on-error-color: #ffffff;
+  --error-container-color: #fee2e2;
+  --on-error-container-color: #991b1b;
+
+  /* Alias sémantiques --color-* */
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-on-background: var(--on-background);
+  --color-on-surface: var(--on-surface);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-selection: var(--surface-selection);
+  --color-primary: var(--primary-color);
+  --color-on-primary: var(--on-primary-color);
+  --color-primary-container: var(--primary-container-color);
+  --color-on-primary-container: var(--on-primary-container-color);
+  --color-secondary: var(--secondary-color);
+  --color-tertiary: var(--tertiary-color);
+  --color-error: var(--error-color);
+  --color-on-error: var(--on-error-color);
+  --color-error-container: var(--error-container-color);
+  --color-on-error-container: var(--on-error-container-color);
+  --color-warning: var(--warning-color);
+  --color-success: var(--success-color);
+  --color-on-warning-container: var(--on-warning-container-color);
+  --color-on-success-container: var(--on-success-container-color);
+  --color-field-border: var(--field-border-color);
+
+  /* Matériau solid-glass */
+  --glass-quiet-edge: rgba(255, 255, 255, 0.7) rgba(255, 255, 255, 0.35) rgba(255, 255, 255, 0.15);
+  --glass-quiet-outer: rgba(73, 29, 17, 0.07);
+  --glass-quiet-shadow: 0 1px 2px rgba(73, 29, 17, 0.04), 0 4px 12px -4px rgba(73, 29, 17, 0.06);
+
+  /* Palette Analytics v3 (8 teintes validées pour daltonisme) */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #4a3aa7;
+  --series-8: #e34948;
+  --series-neutral: #a1a1aa;
+}
+
+:root.dark,
+:root[data-theme="dark"] {
+  --background: #0f0f0f;
+  --surface: #0f0f0f;
+  --on-background: #e4e4e4;
+  --on-surface: #e4e4e4;
+  --surface-container-lowest: #1c1c1c;
+  --surface-container-low: #151515;
+  --surface-container: #1e1e1e;
+  --surface-container-high: #262626;
+  --surface-container-highest: #333333;
+  --on-surface-variant: #a8a8a8;
+  --outline: #525252;
+  --outline-variant: rgba(255, 255, 255, 0.08);
+  --surface-hover: rgba(255, 255, 255, 0.05);
+  --surface-selection: rgba(52, 199, 115, 0.1);
+  --primary-color: #34c773;
+  --on-primary-color: #071b0f;
+  --primary-container-color: #0d331d;
+  --on-primary-container-color: #86efac;
+  --secondary-color: #4ade80;
+  --secondary-container-color: #14532d;
+  --on-secondary-container-color: #dcfce7;
+  --tertiary-color: #2dd4bf;
+  --tertiary-container-color: #134e4a;
+  --on-tertiary-container-color: #ccfbf1;
+  --warning-color: #f2b14a;
+  --success-color: #4ade80;
+  --on-warning-container-color: #f2b14a;
+  --on-success-container-color: #4ade80;
+  --field-border-color: rgba(255, 255, 255, 0.18);
+  --error-color: #ff6b63;
+  --on-error-color: #450a0a;
+  --error-container-color: #450a0a;
+  --on-error-container-color: #fecaca;
+
+  --glass-quiet-edge: rgba(255, 255, 255, 0.045);
+  --glass-quiet-outer: rgba(0, 0, 0, 0.36);
+  --glass-quiet-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.065), 0 1px 2px rgba(0, 0, 0, 0.25), 0 4px 12px -4px rgba(0, 0, 0, 0.32);
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+  --series-neutral: #52525b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not(.light) {
+    --background: #0f0f0f;
+    --surface: #0f0f0f;
+    --on-background: #e4e4e4;
+    --on-surface: #e4e4e4;
+    --surface-container-lowest: #1c1c1c;
+    --surface-container-low: #151515;
+    --surface-container: #1e1e1e;
+    --surface-container-high: #262626;
+    --surface-container-highest: #333333;
+    --on-surface-variant: #a8a8a8;
+    --outline: #525252;
+    --outline-variant: rgba(255, 255, 255, 0.08);
+    --surface-hover: rgba(255, 255, 255, 0.05);
+    --surface-selection: rgba(52, 199, 115, 0.1);
+    --primary-color: #34c773;
+    --on-primary-color: #071b0f;
+    --primary-container-color: #0d331d;
+    --on-primary-container-color: #86efac;
+    --secondary-color: #4ade80;
+    --secondary-container-color: #14532d;
+    --on-secondary-container-color: #dcfce7;
+    --tertiary-color: #2dd4bf;
+    --tertiary-container-color: #134e4a;
+    --on-tertiary-container-color: #ccfbf1;
+    --warning-color: #f2b14a;
+    --success-color: #4ade80;
+    --on-warning-container-color: #f2b14a;
+    --on-success-container-color: #4ade80;
+    --field-border-color: rgba(255, 255, 255, 0.18);
+    --error-color: #ff6b63;
+    --on-error-color: #450a0a;
+    --error-container-color: #450a0a;
+    --on-error-container-color: #fecaca;
+
+    --glass-quiet-edge: rgba(255, 255, 255, 0.045);
+    --glass-quiet-outer: rgba(0, 0, 0, 0.36);
+    --glass-quiet-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.065), 0 1px 2px rgba(0, 0, 0, 0.25), 0 4px 12px -4px rgba(0, 0, 0, 0.32);
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-8: #e66767;
+    --series-neutral: #52525b;
+  }
+}

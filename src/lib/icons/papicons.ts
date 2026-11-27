@@ -1,3 +1,10 @@
+/**
+ * Correspondance entre les noms d'icones utilises dans le dashboard
+ * (Material Symbols, Lucide/Feather, Phosphor) et les icones Papicons.
+ *
+ * Un nom absent de cette table est converti en PascalCase par toPapiconsName,
+ * puis rendu par Lucide si Papicons ne le fournit pas.
+ */
 export const iconAliases: Record<string, string> = {
   'alert-triangle': 'AlertTriangle',
   'gavel': 'Gavel',
@@ -46,7 +53,7 @@ export const iconAliases: Record<string, string> = {
   'sync': 'Gears',
   'cloud_upload': 'ArrowUp',
   'cloud_download': 'ArrowDown',
-  'visibility': 'Camera',
+  'visibility': 'Camera', // No Eye in Papicons
   'visibility_off': 'Camera',
   'lock': 'Lock',
   'lock_open': 'Unlock',
@@ -206,6 +213,7 @@ export const iconAliases: Record<string, string> = {
   'bug_report': 'Alert',
   'notifications_active': 'Bell',
   'discord': 'Butterfly',
+  // Phosphor-style / legacy names that otherwise fell back to the "?" HelpCircle icon
   'arrowsquareout': 'ExternalLink',
   'arrowsclockwise': 'RefreshCw',
   'calendarblank': 'Calendar',
@@ -262,6 +270,10 @@ export const iconAliases: Record<string, string> = {
   'title': 'Heading',
   'translate': 'Languages',
   'tune': 'SlidersHorizontal',
+
+  // Noms Phosphor ecrits en CamelCase : toPapiconsName rabaisse la casse de
+  // tout ce qui suit la premiere lettre ('SpeakerHigh' -> 'Speakerhigh'), donc
+  // sans alias ils ne resolvaient nulle part et tombaient sur HelpCircle.
   'speakerhigh': 'Volume2',
   'sortascending': 'ArrowUpNarrowWide',
   'sortdescending': 'ArrowDownWideNarrow',
@@ -271,13 +283,20 @@ export const iconAliases: Record<string, string> = {
   'arrowscounterclockwise': 'RotateCcw',
   'warningcircle': 'AlertCircle',
   'prohibit': 'Ban',
+
+  // Noms Material Symbols encore presents dans quelques pages.
   'report_problem': 'AlertTriangle',
   'filter_list_off': 'FunnelX',
   'progress_activity': 'Gears',
+
+  // Absents du registre Lucide du dashboard jusqu'ici.
   'chevrons-right': 'ChevronsRight',
   'toggle-left': 'ToggleLeft',
   'sort-asc': 'ArrowUpNarrowWide',
   'sort-desc': 'ArrowDownWideNarrow',
+
+  // Noms en CamelCase que la normalisation aplatit ('CreditCard' devient
+  // 'Creditcard'), donc introuvables sans alias explicite.
   'creditcard': 'Card',
   'arrowdownbox': 'ArrowDownBox',
   'trianglealert': 'AlertTriangle',
@@ -292,6 +311,7 @@ export const iconAliases: Record<string, string> = {
 
 export const fallbackIconName = 'Grid';
 
+/** Resout un nom d'icone quelconque en nom Papicons/Lucide (PascalCase). */
 export function toPapiconsName(value: unknown): string {
   const normalized = typeof value === 'string' ? value.trim() : '';
   if (!normalized) return fallbackIconName;
