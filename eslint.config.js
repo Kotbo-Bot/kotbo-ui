@@ -12,34 +12,34 @@ export default defineConfig(
 	includeIgnoreFile(gitignorePath),
 	{ ignores: ['dist/**', '.svelte-kit/**', 'build/**'] },
 	js.configs.recommended,
-	ts.configs.recommendedTypeChecked,
+	ts.configs.recommended,
 	svelte.configs.recommended,
 	prettier,
 	svelte.configs.prettier,
 	{
 		languageOptions: {
-			parserOptions: { projectService: true },
 			globals: { ...globals.browser, ...globals.node }
 		},
 		rules: {
 			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-			'no-undef': 'off'
+			'no-undef': 'off',
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{ argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }
+			],
+			'@typescript-eslint/no-explicit-any': 'warn',
+			// @kotbo/ui is a standalone Svelte 5 library, not a SvelteKit app using $app/paths resolve().
+			'svelte/no-navigation-without-resolve': 'off'
 		}
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
 		languageOptions: {
 			parserOptions: {
-				projectService: true,
 				extraFileExtensions: ['.svelte'],
 				parser: ts.parser
 			}
 		}
-	},
-	{
-		// Override or add rule settings here, such as:
-		// 'svelte/button-has-type': 'error'
-		rules: {}
 	}
 );
