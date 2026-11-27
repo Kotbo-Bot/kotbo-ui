@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+set -eu
+
+echo "[pre-push] Typecheck (svelte-check)..."
+bun run check
+
+echo "[pre-push] Lint (eslint)..."
+bun run lint
+
+echo "[pre-push] Tests (bun test)..."
+bun test
+
+echo "[pre-push] Package build & publint..."
+bun run build:pkg
