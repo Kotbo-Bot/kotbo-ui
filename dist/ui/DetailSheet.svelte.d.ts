@@ -1,0 +1,24 @@
+import type { Snippet } from 'svelte';
+import { type TabItem } from './Tabs.svelte';
+type $$ComponentProps = {
+    open: boolean;
+    onClose: () => void;
+    icon?: string;
+    title: string;
+    subtitle?: string | Snippet;
+    bannerUrl?: string | null;
+    leading?: Snippet;
+    badges?: Snippet;
+    titleMeta?: Snippet;
+    actions?: Snippet;
+    tabs?: TabItem[];
+    active?: string;
+    activeTab?: string;
+    onchange?: (id: string) => void;
+    onTabChange?: (id: string) => void;
+    tabsLabel?: string;
+    children: Snippet;
+};
+declare const DetailSheet: import("svelte").Component<$$ComponentProps, {}, "">;
+type DetailSheet = ReturnType<typeof DetailSheet>;
+export default DetailSheet;

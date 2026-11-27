@@ -23,12 +23,12 @@ Bibliothèque partagée de composants **Svelte 5** et de visualisations **Analyt
 ```json
 {
   "dependencies": {
-    "@kotbo/ui": "file:../Kotbo-ui"
+    "@kotbo/ui": "github:Kotbo-Bot/kotbo-ui"
   }
 }
 ```
 
-> Pendant le renommage local en cours, le dossier s'appelle `../analytics-v3` (futur `../Kotbo-ui`).
+> Pour le développement local côte à côte avant push, vous pouvez pointer temporairement vers `"file:../Kotbo-ui"`.
 
 ```bash
 bun install

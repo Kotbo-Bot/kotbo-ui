@@ -1,0 +1,20 @@
+import type { Snippet } from 'svelte';
+type ButtonVariant = 'primary' | 'success' | 'muted' | 'danger' | 'neutral' | 'warning';
+type ButtonSize = 'sm' | 'md' | 'lg';
+type $$ComponentProps = {
+    onClick?: (event: MouseEvent) => void;
+    onclick?: (event: MouseEvent) => void;
+    type?: 'button' | 'submit' | 'reset';
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    fullWidth?: boolean;
+    disabled?: boolean;
+    title?: string;
+    icon?: string;
+    label: string;
+    className?: string;
+    children?: Snippet;
+};
+declare const ActionButton: import("svelte").Component<$$ComponentProps, {}, "">;
+type ActionButton = ReturnType<typeof ActionButton>;
+export default ActionButton;

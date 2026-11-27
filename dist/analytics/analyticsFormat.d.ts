@@ -1,0 +1,10 @@
+import { type KotboUiMessages } from '../config.svelte.js';
+export declare function fmtNumber(n: number | null | undefined, locale?: string): string;
+export declare function fmtPct(value: number, digits?: number, locale?: string): string;
+export declare function fmtMinutes(minutes: number | null | undefined, msgs?: Partial<KotboUiMessages>, locale?: string): string;
+export declare function fmtDuration(seconds: number | null | undefined, msgs?: Partial<KotboUiMessages>, locale?: string): string;
+export declare function fmtDelta(delta: number | null, unit: 'pct' | 'pts' | 'abs', msgs?: Partial<KotboUiMessages>, locale?: string): string;
+export declare function shortDate(dateKey: string, locale?: string): string;
+export declare function daysSince(dateKey: string | null): number | null;
+export declare const SERIES: readonly ["var(--series-1)", "var(--series-2)", "var(--series-3)", "var(--series-4)", "var(--series-5)", "var(--series-6)", "var(--series-7)", "var(--series-8)"];
+export declare const SERIES_NEUTRAL = "var(--series-neutral)";

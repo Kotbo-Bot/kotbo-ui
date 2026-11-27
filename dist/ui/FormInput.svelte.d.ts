@@ -1,0 +1,23 @@
+import type { HTMLInputAttributes } from 'svelte/elements';
+type InputValue = string | number;
+type $$ComponentProps = {
+    id?: string;
+    type?: string;
+    value?: InputValue;
+    placeholder?: string;
+    disabled?: boolean;
+    readonly?: boolean;
+    autocomplete?: HTMLInputAttributes['autocomplete'];
+    className?: string;
+    label?: string;
+    ariaLabel?: string;
+    describedBy?: string | undefined;
+    'aria-describedby'?: string | undefined;
+    icon?: string;
+    required?: boolean;
+    oninput?: (event: Event) => void;
+    onchange?: (event: Event) => void;
+};
+declare const FormInput: import("svelte").Component<$$ComponentProps, {}, "value">;
+type FormInput = ReturnType<typeof FormInput>;
+export default FormInput;

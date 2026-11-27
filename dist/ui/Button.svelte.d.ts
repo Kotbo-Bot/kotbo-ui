@@ -1,0 +1,21 @@
+import type { Snippet } from 'svelte';
+import type { HTMLButtonAttributes } from 'svelte/elements';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type $$ComponentProps = {
+    variant?: Variant;
+    size?: 'sm' | 'md';
+    icon?: string;
+    iconRight?: string;
+    loading?: boolean;
+    fullWidth?: boolean;
+    href?: string;
+    target?: string;
+    type?: 'button' | 'submit' | 'reset';
+    disabled?: boolean;
+    disabledReason?: string;
+    class?: string;
+    children?: Snippet;
+} & Omit<HTMLButtonAttributes, 'type' | 'disabled' | 'class'>;
+declare const Button: import("svelte").Component<$$ComponentProps, {}, "">;
+type Button = ReturnType<typeof Button>;
+export default Button;
