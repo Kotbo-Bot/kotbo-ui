@@ -44,7 +44,31 @@
     },
     "./styles.css": "./dist/styles/index.css",
     "./styles/tokens.css": "./dist/styles/tokens.css",
-    "./styles/components.css": "./dist/styles/components.css"
+    "./styles/components.css": "./dist/styles/components.css",
+    "./config": {
+      "types": "./dist/config.svelte.d.ts",
+      "default": "./dist/config.svelte.js"
+    },
+    "./actions/*": {
+      "types": "./dist/actions/*.d.ts",
+      "default": "./dist/actions/*.js"
+    },
+    "./utils/*": {
+      "types": "./dist/utils/*.d.ts",
+      "default": "./dist/utils/*.js"
+    },
+    "./analytics/timeSeries": {
+      "types": "./dist/analytics/timeSeries.d.ts",
+      "default": "./dist/analytics/timeSeries.js"
+    },
+    "./analytics/analyticsFormat": {
+      "types": "./dist/analytics/analyticsFormat.d.ts",
+      "default": "./dist/analytics/analyticsFormat.js"
+    },
+    "./analytics/chartTable": {
+      "types": "./dist/analytics/chartTable.d.ts",
+      "default": "./dist/analytics/chartTable.js"
+    }
   },
   "scripts": {
     "dev": "vite dev",
