@@ -30,4 +30,11 @@ describe('garde-fou accessibilité @kotbo/ui', () => {
     const src = readFileSync(join(LIB, 'icons/Papicon.svelte'), 'utf-8');
     expect(src).toContain('aria-hidden="true"');
   });
+
+  test('Segmented se comporte comme un groupe de boutons radio', () => {
+    const src = readFileSync(join(LIB, 'ui/Segmented.svelte'), 'utf-8');
+    expect(src).toContain('role="radiogroup"');
+    expect(src).toContain('role="radio"');
+    expect(src).toContain('ArrowRight');
+  });
 });

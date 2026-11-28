@@ -30,6 +30,9 @@ import {
 | `SectionCard` | Carte structurée (en-tête avec icône, titre, description, `actions` et corps `flush` optionnel) | `title`, `description`, `icon`, `flush`, `actions`, `children` |
 | `SettingsGroup` | Groupe de réglages avec en-tête et actions | `title`, `description`, `actions`, `children` |
 | `SettingsRow` | Ligne libellé/description + contrôle aligné à droite (ou empilé via `stacked`) | `label`, `description`, `labelFor`, `stacked`, `children` |
+| `ListGroup` | Titre discret, carte, lignes séparées par un filet rentré | `title`, `footer`, `id`, `children` |
+| `ListRow` | Ligne d'un `ListGroup` ; toute la ligne est cliquable avec `href` ou `onclick` (sans réglage interactif dans `children` dans ce cas) | `label`, `description`, `icon`, `media`, `href`, `onclick`, `external`, `danger`, `stacked`, `children` |
+| `Segmented` | Choix exclusif `radiogroup` avec navigation aux flèches | `options`, `value`, `onchange`, `label`, `stretch` |
 | `StatTile` | Tuile KPI simple (icône, valeur, libellé) | `icon`, `tone` ou `variant` (`primary \| success \| warning \| danger \| neutral`), `value`, `label` |
 | `Menu` | Menu contextuel téléporté dans `document.body` (`use:portal`) avec positionnement adaptatif | `items: MenuItem[]`, `label`, `icon`, `text` |
 | `Breadcrumbs` | Lien de retour (`back`) ou fil d'Ariane structuré (`items: BreadcrumbItem[]`) | `back`, `items`, `ariaLabel` |

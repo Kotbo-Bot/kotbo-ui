@@ -23,6 +23,9 @@
     SearchableSelect,
     SectionCard,
     SettingsGroup,
+    ListGroup,
+    ListRow,
+    Segmented,
     SettingsRow,
     Skeleton,
     StatTile,
@@ -108,6 +111,7 @@
 
   // UI interactive demo state
   let filterVal = $state('all');
+  let density = $state('compact');
   let switchChecked = $state(true);
   let modalOpen = $state(false);
   let confirmOpen = $state(false);
@@ -321,6 +325,13 @@
           </SettingsRow>
         </SectionCard>
       </SettingsGroup>
+
+      <ListGroup title="Listes" footer="ListGroup + ListRow + Segmented">
+        <ListRow icon="bell" label="Notifications" description="Toute la ligne est cliquable." onclick={() => toast.success('Ouvert')} />
+        <ListRow icon="activity" label="Densité" stacked>
+          <Segmented label="Densité" value={density} onchange={(v) => (density = v)} options={[{ value: 'compact', label: 'Compacte' }, { value: 'large', label: 'Aérée' }]} />
+        </ListRow>
+      </ListGroup>
 
       <SectionCard title="Overlays & États" icon="layers">
         <div class="showcase__row">
