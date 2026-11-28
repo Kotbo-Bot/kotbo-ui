@@ -46,7 +46,7 @@ jobs:
         run: bun run build
 
       - name: Publish to npm
-        run: npm publish --provenance --access public --loglevel verbose
+        run: npm publish --provenance --access public
 
   release:
     name: GitHub release
